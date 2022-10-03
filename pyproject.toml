@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "character-bot"
+version = "0.1.0"
+description = ""
+authors = [
+  "Alicja Mahr <braxton@mahr.cc>",
+  "Nick Frosst <nick@cohere.ai>"
+]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "character_bot"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+"discord.py" = "^2.0.0"
+cohere = "^2.5.0"
+coloredlogs = "^15.0.1"
+SQLAlchemy = "^1.4.41"
+SQLAlchemy-Utils = "^0.38.3"
+dataset = "^1.5.2"
+mysqlclient = "^2.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

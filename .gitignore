@@ -1,2 +1,5 @@
 config.yml
 __pycache__/
+.venv
+docker-compose.yml
+config/
