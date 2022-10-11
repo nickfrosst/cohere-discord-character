@@ -1,16 +1,20 @@
 import logging
 import re
+from typing import Optional
 
 from src.bot import Character_Bot
 
 log = logging.getLogger(__name__)
 
-def strip_mentions(message):
-    return re.sub('<.*?>', 'Ghost King', message)
+def strip_mentions(message: str, char_name: Optional[str] = None):
+    return re.sub('<.*?>', char_name if char_name else "Ghost King", message)
 
-def generate_prompt(history: list[list[str]]) -> str:
+
+def generate_prompt(history: list[list[str]], name: Optional[str] = None, prompt: Optional[str] = None, ) -> str:
     text_history = "\n".join([a[0] + ": " + a[1] for a in history])
-    return f'''
+
+    if prompt is None:
+        return f'''
 This is a conversation between a friendly AI called Ghost King and a human.
 Ghost King loves indie pop rock and the Music of Good Kid. 
 He once terrorized this discord but now he feels really bad about it
@@ -34,10 +38,15 @@ Nick: @Ghost King how you feeling today?
 Ghost King: I'm great :) just taking it easy! How about you?
 {text_history}
 Ghost King:'''
+    else:
+        return f'''
+        {prompt}
+        {text_history}
+        {name}:'''
 
 
-def generate_response(bot: Character_Bot, history: list[list[str]]) -> str:
-    prompt = generate_prompt(history=history)
+def generate_response(bot: Character_Bot, history: list[list[str]], name: Optional[str]=None, prompt: Optional[str]=None) -> str:
+    prompt = generate_prompt(name=name, prompt=prompt, history=history)
     
     prediction = bot.cohere_client.generate(model='large',
                                             prompt=prompt,

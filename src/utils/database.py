@@ -40,7 +40,11 @@ class Database:
 
         if "settings" not in db:
             settings: dataset.Table | None = db.create_table("settings")
-            settings.create_column("guild_id", db.types.bigint)
+            assert settings is not None
+
+            settings.create_column("guild_id", db.types.bigint, unique=True, nullable=False)
+            settings.create_column("char_name", db.types.text)
+            settings.create_column("char_desc", db.types.text)
             log.info("Created missing table: settings")
 
         for table in db.tables:

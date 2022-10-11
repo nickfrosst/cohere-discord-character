@@ -29,7 +29,7 @@ class Character_Bot(commands.Bot):
 bot = Character_Bot(
     #activity=discord.Activity(type=discord.ActivityType.listening, name="to your messages"),
     case_insensitive=True,
-    cohere_api_key = os.environ.get("COHERE_API_KEY", ""),
+    cohere_api_key=os.environ.get("COHERE_API_KEY", ""),
     command_prefix="!",
     help_command=None,
     intents=discord.Intents(
@@ -53,7 +53,8 @@ async def on_ready() -> None:
 
 @bot.event
 async def on_guild_join(guild: discord.Guild) -> None:
-    settings_db: dataset.Table | None = database.Database().get()["settings"]
+    db = database.Database().get()
+    settings_db: dataset.Table | None = db["settings"]
     assert settings_db is not None
 
     pk = settings_db.insert(
@@ -62,14 +63,20 @@ async def on_guild_join(guild: discord.Guild) -> None:
         )
     )
 
+    db.commit()
+    db.close()
+
     log.info(f"Guild Joined: {pk} - {guild.id}")
 
 @bot.event
 async def on_guild_remove(guild: discord.Guild) -> None:
-    settings_db: dataset.Table | None = database.Database().get()["settings"]
+    db = database.Database().get()
+    settings_db: dataset.Table | None = db["settings"]
     assert settings_db is not None
     
     settings_db.delete(guild_id=guild.id)
+    db.commit()
+    db.close()
 
     log.info(f"Guild Left: {guild.id}")
 
