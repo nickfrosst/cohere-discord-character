@@ -10,10 +10,10 @@ def strip_mentions(message: str, char_name: Optional[str] = None):
     return re.sub('<.*?>', char_name if char_name else "Ghost King", message)
 
 
-def generate_prompt(history: list[list[str]], name: Optional[str] = None, prompt: Optional[str] = None, ) -> str:
+def generate_prompt(history: list[list[str]], name: Optional[str] = None, desc: Optional[str] = None, ) -> str:
     text_history = "\n".join([a[0] + ": " + a[1] for a in history])
 
-    if prompt is None:
+    if desc is None:
         return f'''
 This is a conversation between a friendly AI called Ghost King and a human.
 Ghost King loves indie pop rock and the Music of Good Kid. 
@@ -40,18 +40,24 @@ Ghost King: I'm great :) just taking it easy! How about you?
 Ghost King:'''
     else:
         return f'''
-        {prompt}
-        {text_history}
-        {name}:'''
+This is a conversation between {name} and a human.
+
+{desc}
+
+---Conversation---
+user: Hey who is this?
+{name}: This is {name}!
+{text_history}
+{name}:'''
 
 
-def generate_response(bot: Character_Bot, history: list[list[str]], name: Optional[str]=None, prompt: Optional[str]=None) -> str:
-    prompt = generate_prompt(name=name, prompt=prompt, history=history)
+def generate_response(bot: Character_Bot, history: list[list[str]], name: Optional[str]=None, desc: Optional[str]=None) -> str:
+    prompt = generate_prompt(name=name, desc=desc, history=history)
     
     prediction = bot.cohere_client.generate(model='large',
                                             prompt=prompt,
                                             max_tokens=100,
-                                            temperature=0.75,
+                                            temperature=0.625,
                                             k=0,
                                             p=0.75,
                                             frequency_penalty=0,
