@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 def strip_mentions(message: str, char_name: Optional[str] = None):
-    return re.sub('<.*?>', char_name if char_name else "Ghost King", message)
+    return re.sub('<.*?>', char_name if char_name else "NPC", message)
 
 
 def format_text_history(history, name):
@@ -27,7 +27,8 @@ def format_text_history(history, name):
             text_history = f"{a[0]}: {a[1]}\n" + text_history
     #text_history = "\n".join([a[0] + ": " + a[1] for a in history if a[1][0] != "*"])
     text_history = text_history.strip()
-    text_history = text_history.replace("NPC", name)
+    if name:
+        text_history = text_history.replace("NPC", name)
     return text_history
 
 
@@ -178,20 +179,12 @@ def generate_response(bot: Character_Bot,
     return text
 
 
-def profile_picture(bot: Character_Bot, name: Optional[str] = "NPC", desc: Optional[str] = "A friendly Robot") -> Image.Image:
+def profile_picture(bot: Character_Bot,
+                    name: Optional[str] = "NPC",
+                    desc: Optional[str] = "A friendly Robot") -> Image.Image:
     host = 'http://34.160.6.154/txt2img'
     prompt = f"Cartoon Profile Picture, {name}, {desc}, Cartoon Profile Picture"
-    response = requests.post(
-        host,
-        json={
-            **{
-                'prompt': prompt,
-                'n_samples': 1,
-                'H': 512,
-                'W': 512,
-                "n_iter": 1
-            }
-        })
+    response = requests.post(host, json={**{'prompt': prompt, 'n_samples': 1, 'H': 512, 'W': 512, "n_iter": 1}})
 
     bstr = response.json()['image']
     bytes = base64.b64decode(bstr)
