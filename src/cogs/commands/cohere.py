@@ -49,13 +49,10 @@ class CohereCommands(commands.Cog):
         self.bot = bot
 
     @app_commands.checks.has_permissions(administrator=True)
-    @app_commands.guild_only()
     class CohereGroup(app_commands.Group):
         pass
 
-    cohere_group = CohereGroup(name="server",
-                               description="Server management commands",
-                               guild_ids=[int(os.environ.get("DISCORD_GUILD_ID", "DISCORD_GUILD_ID_MISSING"))])
+    cohere_group = CohereGroup(name="server", description="Server management commands")
 
     @cohere_group.command(name="character", description="Configures server Cohere character")
     async def character(self, ctx: discord.Interaction):
@@ -83,9 +80,7 @@ class CohereCommands(commands.Cog):
         with BytesIO() as image_binary:
             img.save(image_binary, 'PNG')
             image_binary.seek(0)
-            await ctx.followup.send('', file=discord.File(fp = image_binary, filename = 'profile.png'))
-
-        
+            await ctx.followup.send('', file=discord.File(fp=image_binary, filename='profile.png'))
 
 
 async def setup(bot: Character_Bot) -> None:
